@@ -1,137 +1,89 @@
-
-<h2 class="sr-only">零食訂購統計系統 — 前台提交、後台管理與 Excel 下載</h2>
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: var(--font-sans); }
-  .tabs { display: flex; gap: 4px; padding: 1rem 1rem 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
-  .tab { padding: 8px 18px; font-size: 14px; cursor: pointer; border-radius: var(--border-radius-md) var(--border-radius-md) 0 0; border: 0.5px solid transparent; color: var(--color-text-secondary); background: transparent; transition: all 0.15s; }
-  .tab.active { background: var(--color-background-primary); border-color: var(--color-border-tertiary); border-bottom-color: var(--color-background-primary); color: var(--color-text-primary); font-weight: 500; }
-  .tab:hover:not(.active) { background: var(--color-background-secondary); }
-  .panel { display: none; padding: 1.25rem 1rem; }
-  .panel.active { display: block; }
-  label { font-size: 13px; color: var(--color-text-secondary); display: block; margin-bottom: 4px; }
-  input, select, textarea { width: 100%; margin-bottom: 12px; font-size: 14px; }
-  textarea { height: 64px; resize: vertical; }
-  .btn { padding: 8px 18px; font-size: 14px; cursor: pointer; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-primary); }
-  .btn:hover { background: var(--color-background-secondary); }
-  .btn-primary { background: var(--color-text-primary); color: var(--color-background-primary); border-color: transparent; }
-  .btn-primary:hover { opacity: 0.85; }
-  .btn-success { background: #1D9E75; color: #fff; border-color: transparent; }
-  .btn-success:hover { background: #0F6E56; }
-  .btn-danger { background: #E24B4A; color: #fff; border-color: transparent; font-size: 12px; padding: 4px 10px; }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
-  .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); font-weight: 500; }
-  .badge-teal { background: #E1F5EE; color: #0F6E56; }
-  .badge-blue { background: #E6F1FB; color: #185FA5; }
-  .badge-amber { background: #FAEEDA; color: #854F0B; }
-  .stat-row { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
-  .stat { flex: 1; min-width: 100px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; }
-  .stat-num { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
-  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; padding: 8px 10px; font-weight: 500; font-size: 12px; color: var(--color-text-secondary); border-bottom: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
-  td { padding: 8px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
-  tr:last-child td { border-bottom: none; }
-  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; align-items: flex-end; flex-wrap: wrap; }
-  .filter-row label { margin-bottom: 2px; }
-  .filter-row select { width: auto; min-width: 120px; margin-bottom: 0; }
-  .section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.04em; }
-  .tag-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-  .tag { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: 20px; padding: 3px 10px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
-  .tag-x { cursor: pointer; color: var(--color-text-secondary); font-size: 14px; }
-  .toast { position: fixed; bottom: 1rem; right: 1rem; background: #1D9E75; color: #fff; padding: 10px 18px; border-radius: var(--border-radius-md); font-size: 14px; display: none; z-index: 99; }
-  .empty { color: var(--color-text-secondary); font-size: 14px; text-align: center; padding: 2rem; }
-  .platform-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 6px; font-size: 14px; }
-  .add-row { display: flex; gap: 8px; }
-  .add-row input { margin-bottom: 0; flex: 1; }
-  .url-preview { font-size: 12px; color: var(--color-text-secondary); margin-top: -8px; margin-bottom: 10px; word-break: break-all; }
-  a.url-link { color: var(--color-text-info); text-decoration: underline; cursor: pointer; }
-  .chart-bar { background: var(--color-background-secondary); border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 6px; }
-  .chart-fill { height: 26px; display: flex; align-items: center; padding: 0 10px; font-size: 12px; font-weight: 500; color: #fff; border-radius: var(--border-radius-md); transition: width 0.4s ease; min-width: 40px; }
-  .chart-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 3px; }
-</style>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>零食訂購統計系統 — 前台提交與 Google 表單同步</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
+    .tabs { display: flex; gap: 4px; padding-bottom: 1rem; border-bottom: 0.5px solid #ddd; }
+    .tab { padding: 8px 18px; font-size: 14px; cursor: pointer; border-radius: 6px 6px 0 0; border: 1px solid transparent; background: transparent; color: #666; transition: all 0.15s; }
+    .tab.active { background: #fff; border-color: #ddd; border-bottom-color: #fff; color: #000; font-weight: 500; }
+    .tab:hover:not(.active) { background: #eee; }
+    .panel { display: none; padding: 1.25rem 0; }
+    .panel.active { display: block; }
+    label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; }
+    input, select, textarea { width: 100%; margin-bottom: 12px; font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+    textarea { height: 64px; resize: vertical; }
+    .btn { padding: 8px 18px; font-size: 14px; cursor: pointer; border-radius: 6px; border: 1px solid #ccc; background: #fff; color: #333; }
+    .btn:hover { background: #eee; }
+    .btn-primary { background: #000; color: #fff; border-color: transparent; width: 100%; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-danger { background: #E24B4A; color: #fff; border-color: transparent; font-size: 12px; padding: 4px 10px; cursor: pointer; border-radius: 4px; }
+    .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+    .toast { position: fixed; bottom: 1rem; right: 1rem; background: #1D9E75; color: #fff; padding: 10px 18px; border-radius: 6px; font-size: 14px; display: none; z-index: 99; }
+    .empty { color: #888; font-size: 14px; text-align: center; padding: 2rem; }
+    .platform-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 6px; font-size: 14px; }
+    .add-row { display: flex; gap: 8px; }
+    .add-row input { margin-bottom: 0; flex: 1; }
+  </style>
+</head>
+<body>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('submit')"><i class="ti ti-shopping-cart" aria-hidden="true"></i> 提交訂購</button>
-  <button class="tab" onclick="switchTab('stats')"><i class="ti ti-chart-bar" aria-hidden="true"></i> 統計後台</button>
-  <button class="tab" onclick="switchTab('settings')"><i class="ti ti-settings" aria-hidden="true"></i> 平台設定</button>
+  <button class="tab active" onclick="switchTab('submit')">提交訂購</button>
+  <button class="tab" onclick="switchTab('settings')">平台設定</button>
 </div>
 
-<!-- 提交訂購 -->
 <div id="panel-submit" class="panel active">
   <div class="card">
-    <p class="section-title">新增訂購項目</p>
+    <p style="font-size: 14px; font-weight: bold; margin-top: 0;">新增訂購項目</p>
     <label>平台</label>
-    <select id="platform-select">
-      <option value="">— 請選擇平台 —</option>
-    </select>
+    <select id="platform-select"><option value="">— 請選擇平台 —</option></select>
     <label>商品品名</label>
     <input type="text" id="product-name" placeholder="例：海苔餅乾 原味">
     <label>商品網址</label>
-    <input type="url" id="product-url" placeholder="https://" oninput="previewUrl(this.value)">
-    <div id="url-preview" class="url-preview" style="display:none"></div>
+    <input type="url" id="product-url" placeholder="https://">
     <label>備註（選填）</label>
     <textarea id="product-note" placeholder="口味、數量等備註"></textarea>
-    <button class="btn btn-primary" onclick="submitOrder()"><i class="ti ti-plus" aria-hidden="true"></i> 新增訂購</button>
+    <button class="btn btn-primary" onclick="submitOrder()">送出訂購 (同步到雲端 Excel)</button>
   </div>
+  
   <div id="my-orders">
-    <p class="section-title">已提交項目</p>
+    <p style="font-size: 13px; font-weight: 500; color: #666;">您在此電腦的近期提交紀錄（僅供填單人自己參考）</p>
     <div id="order-list-preview"></div>
   </div>
 </div>
 
-<!-- 統計後台 -->
-<div id="panel-stats" class="panel">
-  <div class="filter-row">
-    <div>
-      <label>篩選平台</label>
-      <select id="filter-platform" onchange="renderStats()">
-        <option value="">全部平台</option>
-      </select>
-    </div>
-    <button class="btn btn-success" onclick="downloadExcel()"><i class="ti ti-download" aria-hidden="true"></i> 下載 Excel</button>
-  </div>
-  <div class="stat-row" id="stat-cards"></div>
-  <div id="platform-charts" style="margin-bottom:1rem"></div>
-  <div class="card" style="padding:0; overflow:hidden">
-    <table id="stats-table">
-      <thead><tr>
-        <th>平台</th><th>商品品名</th><th>網址</th><th>備註</th><th>時間</th>
-      </tr></thead>
-      <tbody id="stats-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- 平台設定 -->
 <div id="panel-settings" class="panel">
   <div class="card">
-    <p class="section-title">已設定平台</p>
+    <p style="font-size: 14px; font-weight: bold; margin-top: 0;">已設定平台</p>
     <div id="platform-list"></div>
     <div class="add-row" style="margin-top:10px">
-      <input type="text" id="new-platform" placeholder="輸入新平台名稱，例：蝦皮">
-      <button class="btn btn-primary" onclick="addPlatform()"><i class="ti ti-plus" aria-hidden="true"></i> 新增</button>
+      <input type="text" id="new-platform" placeholder="輸入新平台名稱">
+      <button class="btn" onclick="addPlatform()">新增</button>
     </div>
-  </div>
-  <div class="card">
-    <p class="section-title">後台統計顯示平台</p>
-    <p style="font-size:13px; color:var(--color-text-secondary); margin-bottom:10px">選擇要在統計後台顯示的平台（不選 = 顯示全部）</p>
-    <div id="active-platforms-setting"></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
+// ====================================================
+// 已自動幫您綁定好專屬的 Google 表單資訊 🚀
+// ====================================================
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdwoETf3k2842mcIFHJ6LmFsuxBN80ZxTqkgEIAcq0MRZ9Ccw/formResponse"; 
+const ENTRY_PLATFORM  = "entry.1077055363"; 
+const ENTRY_NAME      = "entry.1921093865"; 
+const ENTRY_URL       = "entry.484613016"; 
+const ENTRY_NOTE      = "entry.1243668646"; 
+// ====================================================
+
 let platforms = JSON.parse(localStorage.getItem('snack_platforms') || '["蝦皮購物","momo購物","PChome","樂天市場","家樂福"]');
-let activePlatforms = JSON.parse(localStorage.getItem('snack_active') || '[]');
 let orders = JSON.parse(localStorage.getItem('snack_orders') || '[]');
 
 function save() {
   localStorage.setItem('snack_platforms', JSON.stringify(platforms));
-  localStorage.setItem('snack_active', JSON.stringify(activePlatforms));
   localStorage.setItem('snack_orders', JSON.stringify(orders));
 }
 
@@ -139,35 +91,21 @@ function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2000);
+  setTimeout(() => t.style.display = 'none', 3000);
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['submit','stats','settings'][i] === tab));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['submit','settings'][i] === tab));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
-  if (tab === 'stats') renderStats();
   if (tab === 'settings') renderSettings();
   if (tab === 'submit') renderPlatformSelect();
 }
 
 function renderPlatformSelect() {
   const sel = document.getElementById('platform-select');
-  const visible = activePlatforms.length ? platforms.filter(p => activePlatforms.includes(p)) : platforms;
-  sel.innerHTML = '<option value="">— 請選擇平台 —</option>' + visible.map(p => `<option value="${p}">${p}</option>`).join('');
-  const fs = document.getElementById('filter-platform');
-  fs.innerHTML = '<option value="">全部平台</option>' + platforms.map(p => `<option value="${p}">${p}</option>`).join('');
+  sel.innerHTML = '<option value="">— 請選擇平台 —</option>' + platforms.map(p => `<option value="${p}">${p}</option>`).join('');
   renderOrderPreview();
-}
-
-function previewUrl(url) {
-  const div = document.getElementById('url-preview');
-  if (url && url.startsWith('http')) {
-    let host = '';
-    try { host = new URL(url).hostname; } catch(e) { host = url.substring(0,40); }
-    div.innerHTML = `<a class="url-link" onclick="openLink('${url}')">${host}</a>`;
-    div.style.display = 'block';
-  } else { div.style.display = 'none'; }
 }
 
 function submitOrder() {
@@ -175,169 +113,104 @@ function submitOrder() {
   const n = document.getElementById('product-name').value.trim();
   const u = document.getElementById('product-url').value.trim();
   const note = document.getElementById('product-note').value.trim();
-  if (!p) { toast('請選擇平台'); return; }
-  if (!n) { toast('請輸入商品品名'); return; }
+  
+  if (!p) { toast('❌ 請選擇平台'); return; }
+  if (!n) { toast('❌ 請輸入商品品名'); return; }
+
+  // 1. 建立背景隱藏的 Form 表單，用來把資料丟給 Google Form
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = GOOGLE_FORM_URL;
+  form.target = 'hidden_iframe'; // 讓表單在隱藏的 iframe 裡送出，網頁才不會跳轉走
+  form.style.display = 'none';
+
+  const fields = {
+    [ENTRY_PLATFORM]: p,
+    [ENTRY_NAME]: n,
+    [ENTRY_URL]: u,
+    [ENTRY_NOTE]: note
+  };
+
+  for (const [key, value] of Object.entries(fields)) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  // 建立隱藏的 iframe
+  let iframe = document.getElementById('hidden_iframe');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.id = 'hidden_iframe';
+    iframe.name = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  document.body.appendChild(form);
+  form.submit(); // 🚀 執行背景送出！
+  document.body.removeChild(form);
+
+  // 2. 本地端存檔（僅供填單人自己看他剛才填了什麼）
   orders.push({ id: Date.now(), platform: p, name: n, url: u, note, time: new Date().toLocaleString('zh-TW') });
   save();
+
+  // 清空輸入框
   document.getElementById('product-name').value = '';
   document.getElementById('product-url').value = '';
   document.getElementById('product-note').value = '';
-  document.getElementById('url-preview').style.display = 'none';
-  toast('✓ 已新增：' + n);
+  
+  toast('🎉 訂單已成功同步至雲端 Excel！');
   renderOrderPreview();
 }
 
 function renderOrderPreview() {
   const list = document.getElementById('order-list-preview');
-  if (!orders.length) { list.innerHTML = '<div class="empty">尚無訂購項目</div>'; return; }
-  const recent = [...orders].reverse().slice(0, 8);
+  if (!orders.length) { list.innerHTML = '<div class="empty">您在此裝置尚無提交紀錄</div>'; return; }
+  const recent = [...orders].reverse().slice(0, 5);
   list.innerHTML = recent.map(o => `
-    <div class="card" style="padding:10px 14px; margin-bottom:8px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px">
-      <div style="flex:1; min-width:0">
-        <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px">
-          <span class="badge badge-teal">${o.platform}</span>
-          <span style="font-size:14px; font-weight:500">${o.name}</span>
-        </div>
-        ${o.url ? `<div style="font-size:12px; color:var(--color-text-secondary)"><a class="url-link" onclick="openLink('${o.url}')">${(() => { try { return new URL(o.url).hostname } catch(e) { return o.url.substring(0,30) } })()}</a></div>` : ''}
-        ${o.note ? `<div style="font-size:12px; color:var(--color-text-secondary)">${o.note}</div>` : ''}
+    <div class="card" style="padding:10px 14px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+      <div>
+        <strong>[${o.platform}] ${o.name}</strong>
+        <div style="font-size:12px; color:gray">${o.note || '無備註'}</div>
       </div>
-      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px">
-        <span style="font-size:11px; color:var(--color-text-secondary)">${o.time}</span>
-        <button class="btn btn-danger" onclick="deleteOrder(${o.id})"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
+      <span style="font-size:11px; color:gray">${o.time}</span>
     </div>
-  `).join('');
-}
-
-function deleteOrder(id) {
-  orders = orders.filter(o => o.id !== id);
-  save();
-  renderOrderPreview();
-  toast('已刪除');
-}
-
-function renderStats() {
-  const filter = document.getElementById('filter-platform')?.value || '';
-  const visible = activePlatforms.length ? platforms.filter(p => activePlatforms.includes(p)) : platforms;
-  let data = orders.filter(o => visible.includes(o.platform));
-  if (filter) data = data.filter(o => o.platform === filter);
-
-  const cards = document.getElementById('stat-cards');
-  const byPlatform = {};
-  data.forEach(o => { byPlatform[o.platform] = (byPlatform[o.platform] || 0) + 1; });
-  const maxCount = Math.max(...Object.values(byPlatform), 1);
-  const colors = ['#1D9E75','#378ADD','#BA7517','#D4537E','#7F77DD','#639922'];
-
-  cards.innerHTML = `
-    <div class="stat"><div class="stat-num">${data.length}</div><div class="stat-label">總訂購項目</div></div>
-    <div class="stat"><div class="stat-num">${Object.keys(byPlatform).length}</div><div class="stat-label">涉及平台數</div></div>
-    <div class="stat"><div class="stat-num">${[...new Set(data.map(o=>o.name))].length}</div><div class="stat-label">商品種類</div></div>
-  `;
-
-  const charts = document.getElementById('platform-charts');
-  if (Object.keys(byPlatform).length) {
-    charts.innerHTML = '<p class="section-title">各平台訂購量</p>' + Object.entries(byPlatform).sort((a,b)=>b[1]-a[1]).map(([p,c],i) => `
-      <div style="margin-bottom:8px">
-        <div class="chart-label">${p} <span style="font-weight:500; color:var(--color-text-primary)">${c}</span></div>
-        <div class="chart-bar"><div class="chart-fill" style="width:${Math.round(c/maxCount*100)}%; background:${colors[i%colors.length]}">${c}</div></div>
-      </div>
-    `).join('');
-  } else { charts.innerHTML = ''; }
-
-  const tbody = document.getElementById('stats-body');
-  if (!data.length) { tbody.innerHTML = '<tr><td colspan="5" class="empty">目前沒有資料</td></tr>'; return; }
-  tbody.innerHTML = [...data].reverse().map(o => `
-    <tr>
-      <td><span class="badge badge-teal">${o.platform}</span></td>
-      <td style="font-weight:500">${o.name}</td>
-      <td>${o.url ? `<a class="url-link" onclick="openLink('${o.url}')"><i class="ti ti-external-link" aria-hidden="true"></i> 開啟</a>` : '—'}</td>
-      <td style="color:var(--color-text-secondary)">${o.note||'—'}</td>
-      <td style="color:var(--color-text-secondary); white-space:nowrap">${o.time}</td>
-    </tr>
   `).join('');
 }
 
 function renderSettings() {
   const list = document.getElementById('platform-list');
-  list.innerHTML = platforms.length ? platforms.map((p,i) => `
+  list.innerHTML = platforms.map((p,i) => `
     <div class="platform-item">
       <span>${p}</span>
-      <button class="btn btn-danger" onclick="removePlatform(${i})"><i class="ti ti-trash" aria-hidden="true"></i> 刪除</button>
+      <button class="btn btn-danger" onclick="removePlatform(${i})">刪除</button>
     </div>
-  `).join('') : '<div class="empty">尚無平台</div>';
-
-  const actDiv = document.getElementById('active-platforms-setting');
-  actDiv.innerHTML = platforms.map(p => `
-    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; padding:6px 0; font-size:14px; color:var(--color-text-primary); margin-bottom:0">
-      <input type="checkbox" ${activePlatforms.includes(p)?'checked':''} onchange="toggleActive('${p}',this.checked)" style="width:16px; height:16px; margin:0; cursor:pointer">
-      ${p}
-    </label>
   `).join('');
 }
 
 function addPlatform() {
   const inp = document.getElementById('new-platform');
   const name = inp.value.trim();
-  if (!name) { toast('請輸入平台名稱'); return; }
+  if (!name) return;
   if (platforms.includes(name)) { toast('平台已存在'); return; }
   platforms.push(name);
   save();
   inp.value = '';
   renderSettings();
-  renderPlatformSelect();
-  toast('已新增平台：' + name);
 }
 
 function removePlatform(i) {
-  const name = platforms[i];
   platforms.splice(i, 1);
-  activePlatforms = activePlatforms.filter(p => p !== name);
   save();
   renderSettings();
-  renderPlatformSelect();
-  toast('已刪除平台：' + name);
 }
 
-function toggleActive(p, checked) {
-  if (checked) { if (!activePlatforms.includes(p)) activePlatforms.push(p); }
-  else { activePlatforms = activePlatforms.filter(x => x !== p); }
-  save();
-  renderPlatformSelect();
-}
-
-function downloadExcel() {
-  const filter = document.getElementById('filter-platform')?.value || '';
-  const visible = activePlatforms.length ? platforms.filter(p => activePlatforms.includes(p)) : platforms;
-  let data = orders.filter(o => visible.includes(o.platform));
-  if (filter) data = data.filter(o => o.platform === filter);
-
-  if (!data.length) { toast('沒有資料可以下載'); return; }
-
-  const wb = XLSX.utils.book_new();
-
-  // 明細工作表
-  const detail = [['平台','商品品名','商品網址','備註','提交時間']];
-  data.forEach(o => detail.push([o.platform, o.name, o.url||'', o.note||'', o.time]));
-  const ws1 = XLSX.utils.aoa_to_sheet(detail);
-  ws1['!cols'] = [{wch:14},{wch:24},{wch:40},{wch:20},{wch:18}];
-  XLSX.utils.book_append_sheet(wb, ws1, '訂購明細');
-
-  // 平台統計工作表
-  const byPlatform = {};
-  data.forEach(o => { byPlatform[o.platform] = (byPlatform[o.platform]||[]).concat(o.name); });
-  const summary = [['平台','訂購數量','商品清單']];
-  Object.entries(byPlatform).sort((a,b)=>b[1].length-a[1].length).forEach(([p,names]) => {
-    summary.push([p, names.length, [...new Set(names)].join('、')]);
-  });
-  const ws2 = XLSX.utils.aoa_to_sheet(summary);
-  ws2['!cols'] = [{wch:14},{wch:10},{wch:50}];
-  XLSX.utils.book_append_sheet(wb, ws2, '平台統計');
-
-  const fname = `零食訂購清單_${new Date().toLocaleDateString('zh-TW').replace(/\//g,'-')}.xlsx`;
-  XLSX.writeFile(wb, fname);
-  toast('✓ Excel 已下載');
-}
-
+// 初始啟動
 renderPlatformSelect();
-renderOrderPreview();
 </script>
+
+</body>
+</html>
