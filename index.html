@@ -17,15 +17,10 @@
     textarea { height: 64px; resize: vertical; }
     .btn { padding: 8px 18px; font-size: 14px; cursor: pointer; border-radius: 6px; border: 1px solid #ccc; background: #fff; color: #333; }
     .btn:hover { background: #eee; }
-    .btn-primary { background: #000; color: #fff; border-color: transparent; width: 100%; }
+    .btn-primary { background: #000; color: #fff; border-color: transparent; width: 100%; font-size: 16px; font-weight: bold; padding: 12px; }
     .btn-primary:hover { opacity: 0.85; }
-    .btn-danger { background: #E24B4A; color: #fff; border-color: transparent; font-size: 12px; padding: 4px 10px; cursor: pointer; border-radius: 4px; }
     .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 12px; }
-    .toast { position: fixed; bottom: 1rem; right: 1rem; background: #1D9E75; color: #fff; padding: 10px 18px; border-radius: 6px; font-size: 14px; display: none; z-index: 99; }
-    .empty { color: #888; font-size: 14px; text-align: center; padding: 2rem; }
-    .platform-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 6px; font-size: 14px; }
-    .add-row { display: flex; gap: 8px; }
-    .add-row input { margin-bottom: 0; flex: 1; }
+    .toast { position: fixed; bottom: 1rem; right: 1rem; background: #E24B4A; color: #fff; padding: 10px 18px; border-radius: 6px; font-size: 14px; display: none; z-index: 99; }
   </style>
 </head>
 <body>
@@ -35,34 +30,35 @@
   <button class="tab" onclick="switchTab('settings')">平台設定</button>
 </div>
 
-<!-- 提交訂購面板 -->
 <div id="panel-submit" class="panel active">
-  <div class="card">
-    <p style="font-size: 14px; font-weight: bold; margin-top: 0;">新增訂購項目</p>
-    <label>平台</label>
-    <select id="platform-select"><option value="">— 請選擇平台 —</option></select>
-    <label>商品品名</label>
-    <input type="text" id="product-name" placeholder="例：海苔餅乾 原味">
-    <label>商品網址</label>
-    <input type="url" id="product-url" placeholder="https://">
-    <label>備註（選填）</label>
-    <textarea id="product-note" placeholder="口味、數量等備註"></textarea>
-    <button class="btn btn-primary" onclick="submitOrder()">送出訂購 (同步到雲端 Excel)</button>
-  </div>
-  
-  <div id="my-orders">
-    <p style="font-size: 13px; font-weight: 500; color: #666;">您在此電腦的近期提交紀錄（僅供填單人自己參考）</p>
-    <div id="order-list-preview"></div>
-  </div>
+  <form id="snack-form" method="POST" action="https://docs.google.com/forms/u/0/d/e/1FAIpQLSdwoETf3k2842mcIFHJ6LmFsuxBN80ZxTqkgEIAcq0MRZ9Ccw/formResponse" onsubmit="return handleFormSubmit()">
+    <div class="card">
+      <p style="font-size: 14px; font-weight: bold; margin-top: 0;">新增訂購項目</p>
+      
+      <label>平台</label>
+      <select id="platform-select" name="entry.1077055363">
+        </select>
+      
+      <label>商品品名</label>
+      <input type="text" id="product-name" name="entry.1921093865" placeholder="例：海苔餅乾 原味" required>
+      
+      <label>商品網址</label>
+      <input type="url" id="product-url" name="entry.484613016" placeholder="https://">
+      
+      <label>備註（選填）</label>
+      <textarea id="product-note" name="entry.1243668646" placeholder="口味、數量等備註"></textarea>
+      
+      <button type="submit" class="btn btn-primary">🚀 送出訂購 (確保同步雲端)</button>
+    </div>
+  </form>
 </div>
 
-<!-- 平台設定面板 -->
 <div id="panel-settings" class="panel">
   <div class="card">
     <p style="font-size: 14px; font-weight: bold; margin-top: 0;">已設定平台</p>
     <div id="platform-list"></div>
-    <div class="add-row" style="margin-top:10px">
-      <input type="text" id="new-platform" placeholder="輸入新平台名稱">
+    <div class="add-row" style="margin-top:10px; display:flex; gap:8px;">
+      <input type="text" id="new-platform" placeholder="輸入新平台名稱" style="margin-bottom:0; flex:1;">
       <button class="btn" onclick="addPlatform()">新增</button>
     </div>
   </div>
@@ -71,24 +67,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ====================================================
-// 已自動幫您綁定好專屬的 Google 表單資訊 🚀
-// ====================================================
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdwoETf3k2842mcIFHJ6LmFsuxBN80ZxTqkgEIAcq0MRZ9Ccw/formResponse"; 
-const ENTRY_PLATFORM  = "entry.1077055363"; 
-const ENTRY_NAME      = "entry.1921093865"; 
-const ENTRY_URL       = "entry.484613016"; 
-const ENTRY_NOTE      = "entry.1243668646"; 
-// ====================================================
-
-// 這裡已經幫您把預設改成 家樂福、全聯、垂坤 囉！
 let platforms = JSON.parse(localStorage.getItem('snack_platforms') || '["家樂福","全聯","垂坤"]');
-let orders = JSON.parse(localStorage.getItem('snack_orders') || '[]');
-
-function save() {
-  localStorage.setItem('snack_platforms', JSON.stringify(platforms));
-  localStorage.setItem('snack_orders', JSON.stringify(orders));
-}
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -108,84 +87,24 @@ function switchTab(tab) {
 function renderPlatformSelect() {
   const sel = document.getElementById('platform-select');
   sel.innerHTML = '<option value="">— 請選擇平台 —</option>' + platforms.map(p => `<option value="${p}">${p}</option>`).join('');
-  renderOrderPreview();
 }
 
-function submitOrder() {
+function handleFormSubmit() {
   const p = document.getElementById('platform-select').value;
-  const n = document.getElementById('product-name').value.trim();
-  const u = document.getElementById('product-url').value.trim();
-  const note = document.getElementById('product-note').value.trim();
-  
-  if (!p) { toast('❌ 請選擇平台'); return; }
-  if (!n) { toast('❌ 請輸入商品品名'); return; }
-
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = GOOGLE_FORM_URL;
-  form.target = 'hidden_iframe';
-  form.style.display = 'none';
-
-  const fields = {
-    [ENTRY_PLATFORM]: p,
-    [ENTRY_NAME]: n,
-    [ENTRY_URL]: u,
-    [ENTRY_NOTE]: note
-  };
-
-  for (const [key, value] of Object.entries(fields)) {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = value;
-    form.appendChild(input);
+  if (!p) {
+    toast('❌ 請選擇平台！');
+    return false; // 阻擋送出
   }
-
-  let iframe = document.getElementById('hidden_iframe');
-  if (!iframe) {
-    iframe = document.createElement('iframe');
-    iframe.id = 'hidden_iframe';
-    iframe.name = 'hidden_iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-
-  orders.push({ id: Date.now(), platform: p, name: n, url: u, note, time: new Date().toLocaleString('zh-TW') });
-  save();
-
-  document.getElementById('product-name').value = '';
-  document.getElementById('product-url').value = '';
-  document.getElementById('product-note').value = '';
-  
-  toast('🎉 訂單已成功同步至雲端 Excel！');
-  renderOrderPreview();
-}
-
-function renderOrderPreview() {
-  const list = document.getElementById('order-list-preview');
-  if (!orders.length) { list.innerHTML = '<div class="empty">您在此裝置尚無提交紀錄</div>'; return; }
-  const recent = [...orders].reverse().slice(0, 5);
-  list.innerHTML = recent.map(o => `
-    <div class="card" style="padding:10px 14px; margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
-      <div>
-        <strong>[${o.platform}] ${o.name}</strong>
-        <div style="font-size:12px; color:gray">${o.note || '無備註'}</div>
-      </div>
-      <span style="font-size:11px; color:gray">${o.time}</span>
-    </div>
-  `).join('');
+  // 驗證通過，允許表單直接跳轉送去 Google Form
+  return true;
 }
 
 function renderSettings() {
   const list = document.getElementById('platform-list');
   list.innerHTML = platforms.map((p,i) => `
-    <div class="platform-item">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 6px; font-size: 14px;">
       <span>${p}</span>
-      <button class="btn btn-danger" onclick="removePlatform(${i})">刪除</button>
+      <button class="btn" style="background:#E24B4A; color:#fff; border:none; padding:4px 10px;" onclick="removePlatform(${i})">刪除</button>
     </div>
   `).join('');
 }
@@ -194,19 +113,20 @@ function addPlatform() {
   const inp = document.getElementById('new-platform');
   const name = inp.value.trim();
   if (!name) return;
-  if (platforms.includes(name)) { toast('平台已存在'); return; }
+  if (platforms.includes(name)) { toast('❌ 平台已存在'); return; }
   platforms.push(name);
-  save();
+  localStorage.setItem('snack_platforms', JSON.stringify(platforms));
   inp.value = '';
   renderSettings();
 }
 
 function removePlatform(i) {
   platforms.splice(i, 1);
-  save();
+  localStorage.setItem('snack_platforms', JSON.stringify(platforms));
   renderSettings();
 }
 
+// 初始啟動
 renderPlatformSelect();
 </script>
 </body>
